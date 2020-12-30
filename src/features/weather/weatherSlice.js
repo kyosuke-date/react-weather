@@ -1,13 +1,15 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 
-const dateUrl = "http://api.openweathermap.org/data/2.5/weather?q=";
+const dateUrl = "https://api.openweathermap.org/data/2.5/weather?q=";
 const dateZipUrl = "http://api.openweathermap.org/data/2.5/weather?zip=";
 const dailyUrl = "http://api.openweathermap.org/data/2.5/forecast/?q=";
-const dailyZipUrl = "http://api.openweathermap.org/data/2.5/forecast/?zip=";
+const dailyZipUrl = "https://api.openweathermap.org/data/2.5/forecast/?zip=";
 const apiKey = "&units=metric&lang=ja&appid=ab71513f3662eea8e0617947835b0c9c";
 // http://api.openweathermap.org/data/2.5/forecast/?q=Tokyo&units=metric&cnt=8&appid=ab71513f3662eea8e0617947835b0c9c
 // https://api.openweathermap.org/data/2.5/weather?zip=150-0002,jp&units=metric&APPID=ab71513f3662eea8e0617947835b0c9c
+// https://api.openweathermap.org/data/2.5/forecast/?zip=150-0002&units=metric&lang=ja&appid=ab71513f3662eea8e0617947835b0c9c
+// https://api.openweathermap.org/data/2.5/forecast/?zip=150-0002,jp&units=metric&APPID=ab71513f3662eea8e0617947835b0c9c
 // https://api.openweathermap.org/data/2.5/weather?q=gunma,jp&units=metric&lang=ja&APPID=ab71513f3662eea8e0617947835b0c9c
 
 const initialState = {
@@ -115,12 +117,21 @@ export const fetchAsyncGetZipTodayData = createAsyncThunk(
   }
 );
 export const fetchAsyncGetDailyData = createAsyncThunk(
-  "weather/getZipDaily",
+  "weather/getDaily",
   async (city) => {
     const { data } = await axios
       .get(`${dailyUrl}${city},jp${apiKey}`)
       .catch((err) => console.log(err));
     return { data, city };
+  }
+);
+export const fetchAsyncGetZipDailyData = createAsyncThunk(
+  "weather/getZipDaily",
+  async (zip) => {
+    const { data } = await axios
+      .get(`${dailyZipUrl}${zip},jp${apiKey}`)
+      .catch((err) => console.log(err));
+    return { data, zip };
   }
 );
 
@@ -133,27 +144,38 @@ export const weatherSlice = createSlice({
       return {
         ...state,
         todayData: action.payload.data,
-        prefname: action.payload.city,
-        prefKana: action.payload.data.name,
-        zipcode: "",
+        // prefname: action.payload.city,
+        // prefKana: action.payload.data.name,
+        // zipcode: "",
       };
     });
     builder.addCase(fetchAsyncGetZipTodayData.fulfilled, (state, action) => {
       return {
         ...state,
         todayData: action.payload.data,
-        zipcode: action.payload.zip,
-        prefname: action.payload.data.name,
-        prefKana: "",
+        // zipcode: action.payload.zip,
+        // prefname: action.payload.data.name,
+        // prefKana: "",
       };
     });
     builder.addCase(fetchAsyncGetDailyData.fulfilled, (state, action) => {
+      const { list, city } = action.payload.data;
       return {
         ...state,
-        todayData: action.payload.data,
-        zipcode: action.payload.zip,
+        dailyData: list,
         prefname: action.payload.city,
-        prefKana: action.payload.data.name,
+        prefKana: city.name,
+        zipcode: "",
+      };
+    });
+    builder.addCase(fetchAsyncGetZipDailyData.fulfilled, (state, action) => {
+      const { list, city } = action.payload.data;
+      return {
+        ...state,
+        dailyData: list,
+        zipcode: action.payload.zip,
+        prefname: city.name,
+        prefKana: "",
       };
     });
   },

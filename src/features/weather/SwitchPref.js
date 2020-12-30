@@ -9,7 +9,9 @@ import { makeStyles } from "@material-ui/core/styles";
 import { useDispatch } from "react-redux";
 import {
   fetchAsyncGetZipTodayData,
+  fetchAsyncGetZipDailyData,
   fetchAsyncGetTodayData,
+  fetchAsyncGetDailyData,
 } from "./weatherSlice";
 import { FaPaperPlane } from "react-icons/fa";
 
@@ -20,11 +22,13 @@ const useStyles = makeStyles((theme) => ({
   },
   root: {
     display: "flex",
-    justifyContent: "center",
+    justifyContent: "flex-start",
+    marginTop: 0,
   },
   icon: {
     pading: 0,
-    margin: 0,
+    margin: "15px 0 0 0",
+    fontSize: 18,
   },
 }));
 
@@ -87,7 +91,10 @@ const SwitchPref = () => {
     <>
       <FormControl className={classes.formControl}>
         <NativeSelect
-          onChange={(e) => dispatch(fetchAsyncGetTodayData(e.target.value))}
+          onChange={(e) => {
+            dispatch(fetchAsyncGetTodayData(e.target.value));
+            dispatch(fetchAsyncGetDailyData(e.target.value));
+          }}
         >
           <option value="">県名で検索</option>
           {prefs.map(({ en, ja }, id) => (
@@ -107,7 +114,10 @@ const SwitchPref = () => {
             onChange={(e) => setZip(e.target.value)}
           />
           <Button
-            onClick={() => dispatch(fetchAsyncGetZipTodayData(zip))}
+            onClick={() => {
+              dispatch(fetchAsyncGetZipTodayData(zip));
+              dispatch(fetchAsyncGetZipDailyData(zip));
+            }}
             disabled={!zip}
           >
             <FaPaperPlane className={classes.icon} />
