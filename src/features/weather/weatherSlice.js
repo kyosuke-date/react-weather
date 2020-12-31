@@ -6,12 +6,8 @@ const dateZipUrl = "http://api.openweathermap.org/data/2.5/weather?zip=";
 const dailyUrl = "http://api.openweathermap.org/data/2.5/forecast/?q=";
 const dailyZipUrl = "https://api.openweathermap.org/data/2.5/forecast/?zip=";
 const apiKey = "&units=metric&lang=ja&appid=ab71513f3662eea8e0617947835b0c9c";
-// http://api.openweathermap.org/data/2.5/forecast/?q=Tokyo&units=metric&cnt=8&appid=ab71513f3662eea8e0617947835b0c9c
-// https://api.openweathermap.org/data/2.5/weather?zip=150-0002,jp&units=metric&APPID=ab71513f3662eea8e0617947835b0c9c
-// https://api.openweathermap.org/data/2.5/forecast/?zip=150-0002&units=metric&lang=ja&appid=ab71513f3662eea8e0617947835b0c9c
-// https://api.openweathermap.org/data/2.5/forecast/?zip=150-0002,jp&units=metric&APPID=ab71513f3662eea8e0617947835b0c9c
-// https://api.openweathermap.org/data/2.5/weather?q=gunma,jp&units=metric&lang=ja&APPID=ab71513f3662eea8e0617947835b0c9c
 
+// 初期値
 const initialState = {
   todayData: {
     coord: {
@@ -98,6 +94,7 @@ const initialState = {
   zipcode: "",
 };
 
+// 地名で現在の天候のAPI取得
 export const fetchAsyncGetTodayData = createAsyncThunk(
   "weather/getToday",
   async (city) => {
@@ -107,6 +104,8 @@ export const fetchAsyncGetTodayData = createAsyncThunk(
     return { data, city };
   }
 );
+
+// 地名で3時間ごと５日分のAPI取得
 export const fetchAsyncGetZipTodayData = createAsyncThunk(
   "weather/getZipToday",
   async (zip) => {
@@ -116,6 +115,8 @@ export const fetchAsyncGetZipTodayData = createAsyncThunk(
     return { data, zip };
   }
 );
+
+// 郵便番号で現在の天候のAPI取得
 export const fetchAsyncGetDailyData = createAsyncThunk(
   "weather/getDaily",
   async (city) => {
@@ -125,6 +126,8 @@ export const fetchAsyncGetDailyData = createAsyncThunk(
     return { data, city };
   }
 );
+
+// 郵便番号で3時間ごと５日分のAPI取得
 export const fetchAsyncGetZipDailyData = createAsyncThunk(
   "weather/getZipDaily",
   async (zip) => {
@@ -144,18 +147,12 @@ export const weatherSlice = createSlice({
       return {
         ...state,
         todayData: action.payload.data,
-        // prefname: action.payload.city,
-        // prefKana: action.payload.data.name,
-        // zipcode: "",
       };
     });
     builder.addCase(fetchAsyncGetZipTodayData.fulfilled, (state, action) => {
       return {
         ...state,
         todayData: action.payload.data,
-        // zipcode: action.payload.zip,
-        // prefname: action.payload.data.name,
-        // prefKana: "",
       };
     });
     builder.addCase(fetchAsyncGetDailyData.fulfilled, (state, action) => {
@@ -180,8 +177,6 @@ export const weatherSlice = createSlice({
     });
   },
 });
-
-// export const { fetchAsyncGetTodayData } = weatherSlice.actions;
 
 export const selectTodayData = (state) => state.weather.todayData;
 export const selectDailyData = (state) => state.weather.dailyData;

@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
   formControl: {
     marginBottom: theme.spacing(3),
     minWidth: 320,
+    marginBottom: 0,
   },
   root: {
     display: "flex",
@@ -32,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// セレクトボックスと郵便番号検索の実装
 const SwitchPref = () => {
   const classes = useStyles();
   const dispatch = useDispatch();
@@ -96,7 +98,7 @@ const SwitchPref = () => {
             dispatch(fetchAsyncGetDailyData(e.target.value));
           }}
         >
-          <option value="">県名で検索</option>
+          <option value="Tokyo">県名で検索</option>
           {prefs.map(({ en, ja }, id) => (
             <option key={id} value={en}>
               {ja}

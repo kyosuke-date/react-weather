@@ -14,6 +14,7 @@ import Typography from "@material-ui/core/Typography";
 const useStyles = makeStyles((theme) => ({
   root: {
     display: "flex",
+    marginTop: 8,
   },
   details: {
     display: "flex",
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+// 地名、気温、説明、アイコンを表示するカードを作成
 const TempCard = () => {
   const todayData = useSelector(selectTodayData);
   const prefname = useSelector(selectPrefname);
